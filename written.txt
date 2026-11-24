@@ -1,3 +1,25 @@
 a.
+Answer:
+To make a quadtree on the unit square degenerate into a list, put every point in the same corner so that each split sends all of them into one child. The points
+
+p_i = (2^{-(n+1)}, i/(n+1) · 2^{-(n+1)}) for i = 1, …, n
+
+all lie inside a square smaller than 2^{-n} next to the origin. Every split places all n of them in the northwest child and leaves the other three children empty. After n splits the tree is a single chain, and the last leaf holds every primitive.
+
+The point (3/4, 3/4) only overlaps the empty southeast child of the root, so that query finishes in constant time. 
+Querying p_1 follows the chain and then checks all n primitives in the leaf, which takes O(n) time.
+
 b.
+Answer:
+A point never straddles the center lines, so every copy of the same point goes into the same quadrant. Once a leaf passes 8 primitives it splits, but the new child still contains all of the copies and is immediately over the limit again. 
+If the depth is unbounded, insertion never finishes. With a maximum depth, subdivision stops and the deepest leaf just keeps a longer and longer primitive list, so a query that hits that cell has to scan the whole list.
+
+Before splitting a leaf, check where its primitives would go. If all of them would end up in the same quadrant, the split does nothing useful, so keep them in that leaf. It is also worth capping how deep the tree can get, 
+so points that are not identical but sit extremely close together cannot keep forcing new levels.
+
 c.
+Answer:
+Translating every object moves the primitives across the quadtree’s fixed split lines. They change quadrants, start straddling, or leave the root bounds, so the old nodes no longer match the scene and the tree has to be rebuilt. 
+Rotating the scene by 13 degrees around the x-axis does the same thing. The quadrants are axis-aligned, and that rotation does not line up with them. The AABB of a rotated object also gets larger, so objects that used to fit in one cell start straddling.
+
+Quadtrees are well suited to static geometry in a fixed region, where each split can prune a constant proportion of the primitives. They are not well suited to a scene you want to translate or rotate, or to objects that move so much that the tree must be rebuilt.
